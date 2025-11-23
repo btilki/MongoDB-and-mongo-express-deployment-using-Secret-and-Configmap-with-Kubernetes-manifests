@@ -1,42 +1,33 @@
-Here is a cleaned-up, copy-friendly version of your README.
-I standardized formatting, ensured all code blocks render properly, and made headings consistent.
-
----
-
 # MongoDB and mongo-express Deployment Using Secret and ConfigMap (Kubernetes Manifests)
 
-This repository provides simple Kubernetes manifests for deploying a single MongoDB instance and a mongo-express UI connected to it. These manifests are intentionally minimal and ideal for quick testing or local development.
+This repository provides simple Kubernetes manifests for deploying a single MongoDB instance and a mongo-express UI connected to it. These manifests are intentionally minimal and ideal for quick testing or demos.
 
 ## What’s Included
 
-* **`mongo-secret.yaml`**
+* **`mongo-secret.yaml`**  
   Creates an Opaque Secret containing the MongoDB root username and password (base64-encoded).
 
-* **`mongo-configmap.yaml`**
+* **`mongo-configmap.yaml`**  
   Provides the MongoDB service address consumed by mongo-express.
 
 * **`mongo.yaml`**
-
   * **Deployment**: Single-replica MongoDB container, reading credentials from the Secret via:
-
-    * `MONGO_INITDB_ROOT_USERNAME`
-    * `MONGO_INITDB_ROOT_PASSWORD`
+    - `MONGO_INITDB_ROOT_USERNAME`
+    - `MONGO_INITDB_ROOT_PASSWORD`
   * **Service**: ClusterIP service `mongodb-service` exposing port `27017`.
 
 * **`mongo-express.yaml`**
-
   * **Deployment**: Single-replica `mongo-express` container that:
-
-    * Reads admin username/password from the Secret.
-    * Reads DB service address from the ConfigMap.
-    * Builds the connection URI using `ME_CONFIG_MONGODB_URL`.
-  * **Service**: `mongo-express-service`, type `LoadBalancer`, port `8081`, also exposing a NodePort (`30000`) for local clusters.
+    - Reads admin username/password from the Secret.
+    - Reads DB service address from the ConfigMap.
+    - Builds the connection URI using `ME_CONFIG_MONGODB_URL`.
+  * **Service**: `mongo-express-service`, type `LoadBalancer`, port `8081`, and a NodePort (`30000`) for local clusters.
 
 ## Prerequisites
 
-* A Kubernetes cluster (minikube, kind, or cloud provider).
-* `kubectl` configured to access your cluster.
-* For local clusters without a load balancer:
+- A Kubernetes cluster (minikube, kind, or cloud provider).
+- `kubectl` configured to access your cluster.
+- For local clusters without a load balancer:  
   Use `minikube service`, `kubectl port-forward`, or access via NodePort `30000`.
 
 ## Deployment Steps (Recommended Order)
@@ -45,9 +36,9 @@ This repository provides simple Kubernetes manifests for deploying a single Mong
 
 ### 1. Create the Secret
 
-´´´bash
+```bash
 kubectl apply -f mongo-secret.yaml
-´´´
+```
 
 ### 2. Create the ConfigMap
 
@@ -153,30 +144,30 @@ kubectl rollout restart deployment/mongo-express
 
 ### mongo-express Cannot Connect to MongoDB
 
-* Check that the service exists and routes correctly:
+Check that the service exists and routes correctly:
 
-  ```bash
-  kubectl get svc,pods -o wide
-  ```
-* Verify secret values are correct.
-* Check logs:
+```bash
+kubectl get svc,pods -o wide
+```
+Verify secret values are correct.  
+Check logs:
 
-  ```bash
-  kubectl logs deployment/mongo-express
-  ```
+```bash
+kubectl logs deployment/mongo-express
+```
 
 ### MongoDB CrashLoopBackOff
 
-* View logs:
+View logs:
 
-  ```bash
-  kubectl logs <mongodb-pod>
-  ```
-* Check environment variables:
+```bash
+kubectl logs <mongodb-pod>
+```
+Check environment variables:
 
-  ```bash
-  kubectl describe pod <pod>
-  ```
+```bash
+kubectl describe pod <pod>
+```
 
 ## License
 
