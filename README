@@ -30,55 +30,55 @@ This repository contains simple Kubernetes manifests to deploy a single MongoDB 
 **Secrets should exist before Deployments so environment variables are available when pods start.**
 
 1. **Create the Secret:**
-   ```shell
+   ```bash
    kubectl apply -f mongo-secret.yaml
    ```
 
 2. **Create the ConfigMap:**
-   ```shell
+   ```bash
    kubectl apply -f mongo-configmap.yaml
    ```
 
 3. **Create MongoDB (Deployment + Service):**
-   ```shell
+   ```bash
    kubectl apply -f mongo.yaml
    ```
 
 4. **Create mongo-express (Deployment + Service):**
-   ```shell
+   ```bash
    kubectl apply -f mongo-express.yaml
    ```
 
 ## Verify resources
 
 - **Check pods:**
-  ```shell
+  ```bash
   kubectl get pods
   ```
 
 - **Check services:**
-  ```shell
+  ```bash
   kubectl get svc
   ```
 
 - **View logs for a pod (replace `<pod-name>`):**
-  ```shell
+  ```bash
   kubectl logs <pod-name>
   ```
 
 ## Accessing mongo-express
 
 - **If you have a cloud LoadBalancer, get the external IP:**
-  ```shell
+  ```bash
   kubectl get svc mongo-express-service
   ```
 
 - **If running locally (minikube):**
-  ```shell
+  ```bash
   minikube service mongo-express-service
   ```
   or
-  ```shell
+  ```bash
   kubectl port-forward svc/mongo-express-service 8081:8081
   ```
 
@@ -90,16 +90,16 @@ This repository contains simple Kubernetes manifests to deploy a single MongoDB 
 Default credentials (as encoded in `mongo-secret.yaml`):
 
 - **username (base64): `dXNlcm5hbWU=`  -> decode with:**
-  ```shell
+  ```bash
   echo 'dXNlcm5hbWU=' | base64 --decode
   ```
 - **password (base64): `cGFzc3dvcmQ=` -> decode with:**
-  ```shell
+  ```bash
   echo 'cGFzc3dvcmQ=' | base64 --decode
   ```
 
 To change secrets without editing the YAML directly, create/replace using kubectl:
-```shell
+```bash
 kubectl create secret generic mongodb-secret \
   --from-literal=mongo-root-username=youruser \
   --from-literal=mongo-root-password=yourpass \
@@ -107,7 +107,7 @@ kubectl create secret generic mongodb-secret \
 ```
 
 After changing secrets you may need to restart pods to pick up new env values:
-```shell
+```bash
 kubectl rollout restart deployment/mongodb-deployment
 kubectl rollout restart deployment/mongo-express
 ```
@@ -116,7 +116,7 @@ kubectl rollout restart deployment/mongo-express
 
 - If mongo-express shows connection errors:
   - Ensure `mongodb-service` exists and selects the MongoDB pod:
-    ```shell
+    ```bash
     kubectl get svc,mongodb,pods -o wide
     ```
   - Verify the secret values are correct and decoded properly.
@@ -127,11 +127,11 @@ kubectl rollout restart deployment/mongo-express
 
 - If MongoDB pod is CrashLooping:
   - Inspect logs:
-    ```shell
+    ```bash
     kubectl logs <mongodb-pod>
     ```
   - Verify env vars are present and correct:
-    ```shell
+    ```bash
     kubectl describe pod <pod>
     ```
 
