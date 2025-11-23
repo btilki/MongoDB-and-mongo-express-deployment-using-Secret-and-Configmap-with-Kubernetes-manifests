@@ -1,104 +1,140 @@
-# MongoDB and mongo-express deployment using Secret and Configmap with Kubernetes manifests
+Here is a cleaned-up, copy-friendly version of your README.
+I standardized formatting, ensured all code blocks render properly, and made headings consistent.
 
-This repository contains simple Kubernetes manifests to deploy a single MongoDB instance and a mongo-express UI connected to it. The manifests are intentionally minimal and suitable for quick testing or local development.
+---
 
-## What’s included
+# MongoDB and mongo-express Deployment Using Secret and ConfigMap (Kubernetes Manifests)
 
-- `mongo-secret.yaml`  
-  Creates an Opaque Secret containing the MongoDB root username and password (base64-encoded values).
+This repository provides simple Kubernetes manifests for deploying a single MongoDB instance and a mongo-express UI connected to it. These manifests are intentionally minimal and ideal for quick testing or local development.
 
-- `mongo-configmap.yaml`  
-  A ConfigMap that provides the MongoDB service address used by mongo-express.
+## What’s Included
 
-- `mongo.yaml`  
-  - Deployment: a single-replica `mongo` container that reads root credentials from the Secret via environment variables expected by the official MongoDB image (`MONGO_INITDB_ROOT_USERNAME`, `MONGO_INITDB_ROOT_PASSWORD`).
-  - Service: ClusterIP service `mongodb-service` exposing port 27017 for internal cluster access.
+* **`mongo-secret.yaml`**
+  Creates an Opaque Secret containing the MongoDB root username and password (base64-encoded).
 
-- `mongo-express.yaml`  
-  - Deployment: a single-replica `mongo-express` container; it reads admin username/password from the Secret and service address from the ConfigMap. `ME_CONFIG_MONGODB_URL` is constructed using environment variable substitution to form the connection URI.
-  - Service: a `mongo-express-service` of type `LoadBalancer` with port 8081 (also sets `nodePort: 30000` — useful for non-cloud environments).
+* **`mongo-configmap.yaml`**
+  Provides the MongoDB service address consumed by mongo-express.
+
+* **`mongo.yaml`**
+
+  * **Deployment**: Single-replica MongoDB container, reading credentials from the Secret via:
+
+    * `MONGO_INITDB_ROOT_USERNAME`
+    * `MONGO_INITDB_ROOT_PASSWORD`
+  * **Service**: ClusterIP service `mongodb-service` exposing port `27017`.
+
+* **`mongo-express.yaml`**
+
+  * **Deployment**: Single-replica `mongo-express` container that:
+
+    * Reads admin username/password from the Secret.
+    * Reads DB service address from the ConfigMap.
+    * Builds the connection URI using `ME_CONFIG_MONGODB_URL`.
+  * **Service**: `mongo-express-service`, type `LoadBalancer`, port `8081`, also exposing a NodePort (`30000`) for local clusters.
 
 ## Prerequisites
 
-- A Kubernetes cluster (minikube, kind, or cloud provider).
-- kubectl configured to target the cluster.
-- If using a local cluster without a cloud load balancer:
-  - Use `minikube service mongo-express-service` or `kubectl port-forward` to access mongo-express, or leave the included `nodePort: 30000` and access via your cluster node IP and port 30000.
+* A Kubernetes cluster (minikube, kind, or cloud provider).
+* `kubectl` configured to access your cluster.
+* For local clusters without a load balancer:
+  Use `minikube service`, `kubectl port-forward`, or access via NodePort `30000`.
 
-## Quick deploy (recommended order)
+## Deployment Steps (Recommended Order)
 
-**Secrets should exist before Deployments so environment variables are available when pods start.**
+> Secrets must exist before Deployments so environment variables are available when pods start.
 
-1. **Create the Secret:**
-   ```bash
-   kubectl apply -f mongo-secret.yaml
-   ```
+### 1. Create the Secret
 
-2. **Create the ConfigMap:**
-   ```bash
-   kubectl apply -f mongo-configmap.yaml
-   ```
+```bash
+kubectl apply -f mongo-secret.yaml
+```
 
-3. **Create MongoDB (Deployment + Service):**
-   ```bash
-   kubectl apply -f mongo.yaml
-   ```
+### 2. Create the ConfigMap
 
-4. **Create mongo-express (Deployment + Service):**
-   ```bash
-   kubectl apply -f mongo-express.yaml
-   ```
+```bash
+kubectl apply -f mongo-configmap.yaml
+```
 
-## Verify resources
+### 3. Deploy MongoDB (Deployment + Service)
 
-- **Check pods:**
-  ```bash
-  kubectl get pods
-  ```
+```bash
+kubectl apply -f mongo.yaml
+```
 
-- **Check services:**
-  ```bash
-  kubectl get svc
-  ```
+### 4. Deploy mongo-express (Deployment + Service)
 
-- **View logs for a pod (replace `<pod-name>`):**
-  ```bash
-  kubectl logs <pod-name>
-  ```
+```bash
+kubectl apply -f mongo-express.yaml
+```
+
+## Verifying Resources
+
+### Check Pods
+
+```bash
+kubectl get pods
+```
+
+### Check Services
+
+```bash
+kubectl get svc
+```
+
+### View Pod Logs
+
+```bash
+kubectl logs <pod-name>
+```
 
 ## Accessing mongo-express
 
-- **If you have a cloud LoadBalancer, get the external IP:**
-  ```bash
-  kubectl get svc mongo-express-service
-  ```
+### Cloud LoadBalancer
 
-- **If running locally (minikube):**
-  ```bash
-  minikube service mongo-express-service
-  ```
-  or
-  ```bash
-  kubectl port-forward svc/mongo-express-service 8081:8081
-  ```
+```bash
+kubectl get svc mongo-express-service
+```
 
-- **NodePort option (if nodePort is reachable):**
-  ```
-  http://<node-ip>:30000
-  ```
+### Minikube / Local Cluster
 
-Default credentials (as encoded in `mongo-secret.yaml`):
+```bash
+minikube service mongo-express-service
+```
 
-- **username (base64): `dXNlcm5hbWU=`  -> decode with:**
-  ```bash
-  echo 'dXNlcm5hbWU=' | base64 --decode
-  ```
-- **password (base64): `cGFzc3dvcmQ=` -> decode with:**
-  ```bash
-  echo 'cGFzc3dvcmQ=' | base64 --decode
-  ```
+or
 
-To change secrets without editing the YAML directly, create/replace using kubectl:
+```bash
+kubectl port-forward svc/mongo-express-service 8081:8081
+```
+
+### NodePort (if reachable)
+
+```
+http://<node-ip>:30000
+```
+
+## Default Credentials
+
+These values come from `mongo-secret.yaml`:
+
+### Username
+
+Base64: `dXNlcm5hbWU=`
+
+```bash
+echo 'dXNlcm5hbWU=' | base64 --decode
+```
+
+### Password
+
+Base64: `cGFzc3dvcmQ=`
+
+```bash
+echo 'cGFzc3dvcmQ=' | base64 --decode
+```
+
+## Updating Secrets
+
 ```bash
 kubectl create secret generic mongodb-secret \
   --from-literal=mongo-root-username=youruser \
@@ -106,7 +142,8 @@ kubectl create secret generic mongodb-secret \
   --dry-run=client -o yaml | kubectl apply -f -
 ```
 
-After changing secrets you may need to restart pods to pick up new env values:
+Restart deployments if pods need to pick up new environment variables:
+
 ```bash
 kubectl rollout restart deployment/mongodb-deployment
 kubectl rollout restart deployment/mongo-express
@@ -114,26 +151,37 @@ kubectl rollout restart deployment/mongo-express
 
 ## Troubleshooting
 
-- If mongo-express shows connection errors:
-  - Ensure `mongodb-service` exists and selects the MongoDB pod:
-    ```bash
-    kubectl get svc,mongodb,pods -o wide
-    ```
-  - Verify the secret values are correct and decoded properly.
-  - Check logs:
-    ```shell
-    kubectl logs deployment/mongo-express
-    ```
+### mongo-express Cannot Connect to MongoDB
 
-- If MongoDB pod is CrashLooping:
-  - Inspect logs:
-    ```bash
-    kubectl logs <mongodb-pod>
-    ```
-  - Verify env vars are present and correct:
-    ```bash
-    kubectl describe pod <pod>
-    ```
+* Check that the service exists and routes correctly:
+
+  ```bash
+  kubectl get svc,pods -o wide
+  ```
+* Verify secret values are correct.
+* Check logs:
+
+  ```bash
+  kubectl logs deployment/mongo-express
+  ```
+
+### MongoDB CrashLoopBackOff
+
+* View logs:
+
+  ```bash
+  kubectl logs <mongodb-pod>
+  ```
+* Check environment variables:
+
+  ```bash
+  kubectl describe pod <pod>
+  ```
 
 ## License
+
 MIT
+
+---
+
+If you'd like, I can also generate a cleaner folder structure, add diagrams, or include full sample YAML files.
