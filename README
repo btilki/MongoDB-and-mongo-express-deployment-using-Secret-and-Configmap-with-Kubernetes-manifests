@@ -45,9 +45,9 @@ This repository provides simple Kubernetes manifests for deploying a single Mong
 
 ### 1. Create the Secret
 
-```bash
+´´´bash
 kubectl apply -f mongo-secret.yaml
-```
+´´´
 
 ### 2. Create the ConfigMap
 
