@@ -56,7 +56,7 @@ echo -n 'username' | base64
 Create Kubernetes secrets for MongoDB credentials:
 
 ```bash
-kubectl apply -f manifests/mongodb-secret.yaml
+kubectl apply -f mongo-secret.yaml
 ```
 Note: The secret must be created before deployment.
 ### 3. Create ConfigMaps
@@ -64,21 +64,19 @@ Note: The secret must be created before deployment.
 Create configmaps for environment variables (e.g., database name):
 
 ```bash
-kubectl apply -f manifests/mongodb-configmap.yaml
+kubectl apply -f mongo-configmap.yaml
 ```
 Note: Also ConfigMap must be created before deployment.
 ### 4. Deploy MongoDB
 
 ```bash
-kubectl apply -f manifests/mongodb-deployment.yaml
-kubectl apply -f manifests/mongodb-service.yaml
+kubectl apply -f mongo.yaml
 ```
 
 ### 5. Deploy mongo-express
 
 ```bash
-kubectl apply -f manifests/mongo-express-deployment.yaml
-kubectl apply -f manifests/mongo-express-service.yaml
+kubectl apply -f mongo-express.yaml
 ```
 
 Use NodePort or LoadBalancer service to access Mongo-express.
