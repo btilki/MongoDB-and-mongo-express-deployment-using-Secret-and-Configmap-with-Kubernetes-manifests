@@ -44,7 +44,6 @@ cd MongoDB-and-mongo-express-deployment-using-Secret-and-Configmap-with-Kubernet
 ```
 
 ### 2. Create Secrets
-
 Use base64 encoding for username and password in the secret.yaml file.
 Sample usage: 
 ```bash
@@ -55,9 +54,7 @@ Create Kubernetes secrets for MongoDB credentials:
 ```bash
 kubectl apply -f manifests/mongodb-secret.yaml
 ```
-
-*Edit the file as needed for your usernames/passwords.*
-
+Note: The secret must be created before deployment.
 ### 3. Create ConfigMaps
 
 Create configmaps for environment variables (e.g., database name):
@@ -65,7 +62,7 @@ Create configmaps for environment variables (e.g., database name):
 ```bash
 kubectl apply -f manifests/mongodb-configmap.yaml
 ```
-
+Note: Also ConfigMap must be created before deployment.
 ### 4. Deploy MongoDB
 
 ```bash
@@ -80,8 +77,15 @@ kubectl apply -f manifests/mongo-express-deployment.yaml
 kubectl apply -f manifests/mongo-express-service.yaml
 ```
 
-Access mongo-express via NodePort or LoadBalancer service (see manifest for configuration).
-
+Use NodePort or LoadBalancer service to access Mongo-express.
+To get service information:
+```bash
+kubectl get service
+```
+To start the Mongo-Express service, when minikube is used:
+```bash
+minikube service mongo-express-service
+```
 ## Troubleshooting
 
 - Check pod status:  
