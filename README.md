@@ -32,6 +32,10 @@ This repository provides ready-to-use Kubernetes manifests for deploying **Mongo
 - Access to a Kubernetes cluster (local or cloud)
 - `kubectl` installed and configured
 
+## Start Minikube using Docker driver
+```bash
+minikube start --driver=docker
+```
 ## Setup & Usage
 
 ### 1. Clone the Repository
