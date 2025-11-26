@@ -31,7 +31,6 @@ This repository provides ready-to-use Kubernetes manifests for deploying **Mongo
 
 - Access to a Kubernetes cluster (local or cloud)
 - `kubectl` installed and configured
-- [Docker](https://www.docker.com/) (optional, for custom images)
 
 ## Setup & Usage
 
