@@ -45,6 +45,11 @@ cd MongoDB-and-mongo-express-deployment-using-Secret-and-Configmap-with-Kubernet
 
 ### 2. Create Secrets
 
+Use base64 encoding for username and password in the secret.yaml file.
+Sample usage: 
+```bash
+echo -n 'username' | base64
+```
 Create Kubernetes secrets for MongoDB credentials:
 
 ```bash
