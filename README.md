@@ -38,6 +38,8 @@ This repository provides ready-to-use Kubernetes manifests for deploying **Mongo
 
 ```bash
 git clone https://github.com/btilki/MongoDB-and-mongo-express-deployment-using-Secret-and-Configmap-with-Kubernetes-manifests.git
+```
+```bash
 cd MongoDB-and-mongo-express-deployment-using-Secret-and-Configmap-with-Kubernetes-manifests
 ```
 
